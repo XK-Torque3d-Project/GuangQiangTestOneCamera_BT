@@ -52,6 +52,8 @@ bool IsJiaoYanHidPcvr = false;
 int jiaoyanSpaceTime = 60000;	//30s
 int jiaoyanTotalTime = 5000;	//30s
 int jiaoyanBeginTime = 0;
+int TimeJiGuangQi[8];
+float TimeCameraMin = 1000f / 60f;
 bool stopJiaoyan = false;
 bool bJiaoyanFailed = false;
 int jiaoyan1Count = 0;
@@ -172,10 +174,12 @@ bool pcvr::Init(void)
 
 	mCameraEnable = false;
 
+	ZeroMemory(TimeJiGuangQi, sizeof(TimeJiGuangQi));
 	ZeroMemory( m_sendArray, sizeof( m_sendArray ) );
 	ZeroMemory( m_sendArrTemp5, sizeof( m_sendArrTemp5 ) );
 	ZeroMemory( m_sendArrTemp6, sizeof( m_sendArrTemp6 ) );
 	ZeroMemory( m_sendArrTemp7, sizeof( m_sendArrTemp7 ) );
+	ZeroMemory( m_JiGuangQiState, sizeof( m_JiGuangQiState ) );
 	ZeroMemory( gGetMsg, sizeof( gGetMsg ) );
 	m_saveCoord[0].set( 0, 0 );
 	m_saveCoord[1].set( 0, 0 );
@@ -933,6 +937,32 @@ void pcvr::sendMessage(bool flag)
 	m_sendArray[6] = (BYTE)(m_sendArrTemp6[0] + m_sendArrTemp6[1] * 2 + m_sendArrTemp6[2] * 4 + m_sendArrTemp6[3] * 8
 		+ m_sendArrTemp6[4] * 16 + m_sendArrTemp6[5] * 32 +m_sendArrTemp6[6] * 64 + m_sendArrTemp6[7] * 128);
 
+	//玩家1的激光器打开.
+	if (m_JiGuangQiState[0] == 0x01) {
+		if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] > TimeCameraMin) {
+			m_sendArrTemp7[0] = 0x00;
+			if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] > 2*TimeCameraMin) {
+				TimeJiGuangQi[0] = Platform::getRealMilliseconds();
+			}
+		}
+		if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] <= TimeCameraMin)
+		{
+			m_sendArrTemp7[0] = 0x01;
+		}
+	}
+	else {
+		if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] > 100*TimeCameraMin) {
+			m_sendArrTemp7[0] = 0x00;
+			if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] > 200*TimeCameraMin) {
+				TimeJiGuangQi[0] = Platform::getRealMilliseconds();
+			}
+		}
+		if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] <= 100*TimeCameraMin)
+		{
+			m_sendArrTemp7[0] = 0x01;
+		}
+	}
+
 	//7 - 灯(0 1 闪光灯)
 	m_sendArray[7] = (BYTE)(m_sendArrTemp7[0] + m_sendArrTemp7[1] * 2 + m_sendArrTemp7[2] * 4 + m_sendArrTemp7[3] * 8
 		+ m_sendArrTemp7[4] * 16 + m_sendArrTemp7[5] * 32 +m_sendArrTemp7[6] * 64 + m_sendArrTemp7[7] * 128);
@@ -1446,6 +1476,7 @@ void pcvr::openPlayerGun(int playerIndex, bool flag)
 		val = 0x00;
 	}
 	m_sendArrTemp7[playerIndex] = val;
+	m_JiGuangQiState[playerIndex] = val;
 }
 
 /////////////////////////////////////////////////////////////////////////

@@ -79,6 +79,11 @@ public:
 	BYTE m_sendArrTemp5[8];
 	BYTE m_sendArrTemp6[8];
 	BYTE m_sendArrTemp7[8];
+	/************************************************************************/
+	/*m_JiGuangQiState[x] == 0x00 -> 激光器关闭                             */
+	/*m_JiGuangQiState[x] == 0x01 -> 激光器打开                             */
+	/************************************************************************/
+	BYTE m_JiGuangQiState[8];
 	Point2I m_saveCoord[2];
 	BYTE  gGetMsg[BufGetLen];
 	BYTE  gSendMsg[BufSendLen];
