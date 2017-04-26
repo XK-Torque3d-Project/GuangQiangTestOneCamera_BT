@@ -67,13 +67,13 @@ static AsciiData AsciiTable[NUM_KEYS];
 void Input::init()
 {
 	//CSerialPort mySerialPort;
-/*
+
 	if ( gPcvr == NULL )
 	{
 		gPcvr = new pcvr;
 		//gPcvr->createGun();
 	}
- 
+
 	//if (!mySerialPort.InitPort(1, CBR_38400))			//1
  	if (!mySerialPort.InitPort(1, CBR_38400))
  	{
@@ -92,7 +92,7 @@ void Input::init()
  	{
  		Con::printf( "**************s******************************************OpenListenThread success !" );
  	}
-*/
+
    Con::printf( "Input Init:" );
 
    destroy();
