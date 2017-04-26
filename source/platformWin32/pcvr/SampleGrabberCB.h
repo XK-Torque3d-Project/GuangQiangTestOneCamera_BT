@@ -40,16 +40,16 @@ extern HWND g_hShowImage2;
 #endif
 
 
-extern int balance;
+//extern int balance;
 
 
 class CSampleGrabberCB : public ISampleGrabberCB 
 {
-
-private:
-	UINT _ID;
+//private:
+//	UINT _ID;
 public:
-	int m_nGrayThreshold;
+	UINT _ID;
+	//int m_nGrayThreshold;
 	int m_nMoveRadius;	
 
 	long Width;
@@ -59,7 +59,7 @@ public:
 	long lClientHeight;
 
 	int m_nBrightDotCount;
-	int m_PNumber;
+	//int m_PNumber;
 	int m_nSmoothPoints, m_nSmoothingCount;
 
 	float m_fSmoothingX[20],  m_fSmoothingY[20];
@@ -156,14 +156,12 @@ public:
     void ResetSmoothing();
 	void smoothing(float warpedX, float warpedY);  
 	void Exponentialsmoothing(float warpedX, float warpedY);  
-	void showCalibration(int x, int y, int size);
+	//void showCalibration(int x, int y, int size);
 	void ResetRectify();
 
 	void getUnwantedPoint( BYTE * pBuffer, long buferSize );
 	void subUnWantedPoint( BYTE * pBuffer, long bufferSize );
 };
 
-
 CSampleGrabberCB* SampleGrabberFun(int id);
-
 #endif

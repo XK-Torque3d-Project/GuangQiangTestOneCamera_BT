@@ -37,6 +37,7 @@
 /source/unit
 /source/util
 /source/windowManager
+/source/platformWin32/pcvr-shuangRenGuangQiang
 /source/*.txt
 /source/*.scc
 *.scc

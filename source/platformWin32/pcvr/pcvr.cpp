@@ -53,7 +53,7 @@ int jiaoyanSpaceTime = 60000;	//30s
 int jiaoyanTotalTime = 5000;	//30s
 int jiaoyanBeginTime = 0;
 int TimeJiGuangQi[8];
-float TimeCameraMin = 1000f / 60f;
+float TimeCameraMin = 1000 / 60;
 bool stopJiaoyan = false;
 bool bJiaoyanFailed = false;
 int jiaoyan1Count = 0;
@@ -124,7 +124,7 @@ pcvr::pcvr()
 
 pcvr::~pcvr(void)
 {
-	
+	deleteGun();
 }
 
 bool pcvr::Init(void)
@@ -208,25 +208,26 @@ bool pcvr::deleteGun()
 	return true;
 }
 
-bool pcvr::openDevice()
-{//ffffffffffffffffffffffffffff
-	if (true)
-	{
-		return false;
-	}
-	else
-	{
-		Con::executef( "OnConnectState", "1" );
-		return true;
-	}
-	return false;
-}
+//bool pcvr::openDevice()
+//{//ffffffffffffffffffffffffffff
+//	if (true)
+//	{
+//		return false;
+//	}
+//	else
+//	{
+//		Con::executef( "OnConnectState", "1" );
+//		return true;
+//	}
+//	return false;
+//}
 
 void pcvr::Enable(void)
 {
 	b_enable = true;
 	enableNum ++;
 
+	//b_HasCreateGun = true; //test
 	if (!b_HasCreateGun)
 	{
 		b_HasCreateGun = true;
@@ -332,7 +333,7 @@ void pcvr::keyProcess()
 
 			//change coin information here
 			Con::errorf("player coin num:  %d", CoinCurGame);
-			sprintf(coinStr, "%d",CoinCurPcvr);
+			sprintf_s(coinStr, "%d",CoinCurPcvr);
 			Con::executef( "insertCoin", coinStr );
 			
 			if (bJiaoyanFailed)
@@ -1303,9 +1304,9 @@ void pcvr::createCamera()
 	if( RunGun() )
 	{
 		CSampleGrabberCB *CSgcb1 = SampleGrabberFun(ID_CAMERA1);
-		CSampleGrabberCB *CSgcb2 = SampleGrabberFun(ID_CAMERA2);
-		CSgcb2->m_mode = MODE::MODE_MOTION;
-		CSgcb1->m_mode = MODE::MODE_MOTION;
+		CSgcb1->m_mode = MODE_MOTION;
+		//CSampleGrabberCB *CSgcb2 = SampleGrabberFun(ID_CAMERA2);
+		//CSgcb2->m_mode = MODE::MODE_MOTION;
 		PlayVideo();
 		mCameraEnable = true;
 		setCamPointCallBackFun();
@@ -1326,13 +1327,13 @@ void pcvr::reSetCamera()
 		CSgcb1->m_mode = MODE_MOTION;
 		CSgcb1->g_bBeginDrawRectangle = false;
 	}
-	CSampleGrabberCB *CSgcb2 = NULL;
+	/*CSampleGrabberCB *CSgcb2 = NULL;
 	CSgcb2 = SampleGrabberFun(ID_CAMERA2);
 	if ( CSgcb2 != NULL )
 	{
 		CSgcb2->m_mode = MODE_MOTION;
 		CSgcb2->g_bBeginDrawRectangle = false;
-	}
+	}*/
 }
 
 void pcvr::releaseCamera()
@@ -1344,13 +1345,13 @@ void pcvr::releaseCamera()
 void pcvr::setCamPointCallBackFun()
 {
 	CSampleGrabberCB *g_pCB = NULL;
-	CSampleGrabberCB *g_pCB1 = NULL;
+	//CSampleGrabberCB *g_pCB1 = NULL;
 
 	g_pCB = SampleGrabberFun(ID_CAMERA1);
-	g_pCB1 = SampleGrabberFun(ID_CAMERA2);
+	//g_pCB1 = SampleGrabberFun(ID_CAMERA2);
 
 	g_pCB->m_funPointProc = PointProc1;
-	g_pCB1->m_funPointProc = PointProc2;
+	//g_pCB1->m_funPointProc = PointProc2;
 }
 
 void pcvr::setBasePoint( int playerIndex )
@@ -1369,7 +1370,7 @@ void pcvr::setBasePoint( int playerIndex )
 		g_pCB->g_bBeginDrawRectangle = true;
 		mOnSetBasePointState[0] = true;
 	}
-	if ( playerIndex == 1 )
+	/*if ( playerIndex == 1 )
 	{
 		CSampleGrabberCB *g_pCB1 = NULL;
 		g_pCB1 = SampleGrabberFun(ID_CAMERA2);
@@ -1382,7 +1383,7 @@ void pcvr::setBasePoint( int playerIndex )
 		g_pCB1->m_mode = MODE_SET_CALIBRATION;
 		g_pCB1->g_bBeginDrawRectangle = true;
 		mOnSetBasePointState[1] = true;
-	}
+	}*/
 	openPlayerGun(playerIndex, true );
 }
 
@@ -1433,7 +1434,7 @@ void pcvr::camSetBasePoint()
 	}
 
 	//2p校正信息
-	if ( mOnSetBasePointState[1] && (gGetMsg[23] & 0x40) == 0x40 && !mSetBasePointKeyDown[1] )
+	/*if ( mOnSetBasePointState[1] && (gGetMsg[23] & 0x40) == 0x40 && !mSetBasePointKeyDown[1] )
 	{
 		mSetBasePointKeyDown[1] = true;
 		CSampleGrabberCB *CSgcb2 = SampleGrabberFun(ID_CAMERA2);
@@ -1461,7 +1462,7 @@ void pcvr::camSetBasePoint()
 			
 			mOnSetBasePointState[1] = false;
 		}
-	}
+	}*/
 }
 
 void pcvr::openPlayerGun(int playerIndex, bool flag)
@@ -1587,6 +1588,7 @@ ConsoleFunction( getPlayerFireState, bool, 2, 2, "player Index")// no use -- zai
 			return gPcvr->b_playerTwoOnFire;
 		}
 	}
+	return false;
 }
 
 ConsoleFunction( getPlayerRocketState, bool, 2, 2, "player Index")// no use -- zai sou
@@ -1602,6 +1604,7 @@ ConsoleFunction( getPlayerRocketState, bool, 2, 2, "player Index")// no use -- z
 			return gPcvr->b_playerTwoOnRocket;
 		}
 	}
+	return false;
 }
 
 //boss light - jin du deng

@@ -29,7 +29,7 @@ public:
 	void	Enable();
 	void	Disable();
 
-	bool	openDevice();
+	//bool	openDevice();
 	void	subCoinCount( int playerIndex, int count );
 	int		getCoinNum();
 	void    setPlayerHIDSpeed( int playerIndex, int speedIndex );

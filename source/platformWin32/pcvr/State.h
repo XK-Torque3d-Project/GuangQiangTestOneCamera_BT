@@ -2,7 +2,7 @@
 #define _STATE_H
 
 #define ID_CAMERA1	1
-#define ID_CAMERA2	2
+//#define ID_CAMERA2	2
 
 enum MODE
 {
