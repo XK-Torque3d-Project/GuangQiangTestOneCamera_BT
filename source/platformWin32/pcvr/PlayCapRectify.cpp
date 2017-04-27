@@ -531,11 +531,11 @@ void CloseInterfaces(void)
 		g_pVW[1]->put_Owner(NULL);
 	}*/
 
-#ifdef REGISTER_FILTERGRAPH
-	// Remove filter graph from the running object table   
-	if (g_dwGraphRegister)
-		RemoveGraphFromRot(g_dwGraphRegister);
-#endif
+//#ifdef REGISTER_FILTERGRAPH
+//	// Remove filter graph from the running object table   
+//	if (g_dwGraphRegister)
+//		RemoveGraphFromRot(g_dwGraphRegister);
+//#endif
 
 	if ( !restartCamera )
 	{

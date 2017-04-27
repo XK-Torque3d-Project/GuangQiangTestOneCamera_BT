@@ -45,7 +45,7 @@ void CloseInterfaces(void);
 //void ResizeVideoWindow();
 
 //HRESULT AddGraphToRot(IUnknown *pUnkGraph, DWORD *pdwRegister);
-void RemoveGraphFromRot(DWORD pdwRegister);
+//void RemoveGraphFromRot(DWORD pdwRegister);
 
 //void DrawTarget( HDC hDC,int left,  int top, int right,  int bottom );
 //extern HWND g_hCalibrationWnd;

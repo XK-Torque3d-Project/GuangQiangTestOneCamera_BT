@@ -117,8 +117,6 @@ public:
 	Point unwantedPoint[76800];
 	long unwantedPointNum;
 	int getFrameNum;
-
-
 	ashPINTPROC m_funPointProc;
 
 	enum CALIBRATION_STATE
@@ -144,7 +142,7 @@ public:
 
 	void InitRectifyCfg();
 
-	void DrawQuadrilateral(	IN Point* fourPoint, IN INT count, Color &color, BYTE * pTargetBuffer );
+	//void DrawQuadrilateral(	IN Point* fourPoint, IN INT count, Color &color, BYTE * pTargetBuffer );
 
 	void DisplayRectifyImage(BYTE * pBuffer, long BuferSize);
 
@@ -152,9 +150,9 @@ public:
 
 	int GetPointToConvert( BYTE * pBuffer, int *nAxle_x, int *nAxle_y, int id_led);   
 
-	void ConvertToRectifyImage(BYTE * pBuffer);  
+	//void ConvertToRectifyImage(BYTE * pBuffer);  
     void ResetSmoothing();
-	void smoothing(float warpedX, float warpedY);  
+	//void smoothing(float warpedX, float warpedY);  
 	void Exponentialsmoothing(float warpedX, float warpedY);  
 	//void showCalibration(int x, int y, int size);
 	void ResetRectify();
