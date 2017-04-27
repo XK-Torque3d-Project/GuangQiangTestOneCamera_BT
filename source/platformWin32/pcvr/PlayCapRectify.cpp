@@ -666,7 +666,7 @@ HRESULT FindCaptureDevice(IBaseFilter ** ppSrcFilter)
 				exit(1);
 			}
 
-            if(wcscmp(wPidStr, L"fa02") == 0 || wcscmp(wPidStr, L"fa08") == 0)
+            if(wcscmp(wPidStr, L"fa02") == 0 || wcscmp(wPidStr, L"fa09") == 0)
 			{
 				hr = pMoniker->BindToObject(0,0,IID_IBaseFilter, (void**)&pSrc[0]);
 				if (FAILED(hr))
@@ -698,8 +698,7 @@ HRESULT FindCaptureDevice(IBaseFilter ** ppSrcFilter)
 				Con::executef( "OnConnectState", "6" );
 			}*/
 
-			//if( wcscmp(wPidStr, L"fa02") != 0 && wcscmp(wPidStr, L"fa06") != 0)
-			if(wcscmp(wPidStr, L"fa02") != 0 && wcscmp(wPidStr, L"fa08") != 0)
+			if(wcscmp(wPidStr, L"fa02") != 0 && wcscmp(wPidStr, L"fa09") != 0)
 			{
 				MessageBox(NULL,  L"Camera id error!", L"error!", MB_OK);
 			}
