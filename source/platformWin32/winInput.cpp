@@ -74,8 +74,8 @@ void Input::init()
 		//gPcvr->createGun();
 	}
 
-	//if (!mySerialPort.InitPort(1, CBR_38400))			//1
- 	if (!mySerialPort.InitPort(1, CBR_38400))
+	//if (!mySerialPort.InitPort(1, CBR_38400))
+ 	if (!mySerialPort.InitPort(1, CBR_115200))
  	{
  		Con::printf( "********************s************************************initPort fail !" );
  	}

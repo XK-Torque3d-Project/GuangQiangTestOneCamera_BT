@@ -53,66 +53,86 @@ int jiaoyanSpaceTime = 60000;	//30s
 int jiaoyanTotalTime = 5000;	//30s
 int jiaoyanBeginTime = 0;
 int TimeJiGuangQi[8];
-float TimeCameraMin = 1000 / 60;
 bool stopJiaoyan = false;
 bool bJiaoyanFailed = false;
 int jiaoyan1Count = 0;
 
 BYTE	gunShakeLevelP1 = 0;
 BYTE	gunShakeLevelP2 = 0;
+bool	g_IsUpdatePlayerZXPos = false;
+//当前打开激光器的编号.
+BYTE g_IndexActiveJGQ = 0;
+//游戏窗口大小信息.
+RECT g_RCGame;
+float m_TimeRCGame = -10000;
 
 //void CALLBACK TimerProc(HWND hWnd,UINT nMsg,UINT nTimerid,DWORD dwTime); 
 
-
 void CALLBACK PointProc1(int nID, POINT point)
 {
-	if (bGameTestSelf)
-	{
+	if (bGameTestSelf) {
 		return;
 	}
 
-	HWND hDesktopWnd = GetDesktopWindow();
-	RECT rc;
+	if (!g_IsUpdatePlayerZXPos) {
+		return;
+	}
 
-	GetWindowRect( hDesktopWnd, &rc );
+	if (Platform::getRealMilliseconds() - m_TimeRCGame > 1000) {
+		m_TimeRCGame = Platform::getRealMilliseconds();
+		HWND hDesktopWnd = GetDesktopWindow();
+		if (hDesktopWnd == NULL) {
+			return;
+		}
+		GetWindowRect( hDesktopWnd, &g_RCGame );
+	}
 
-	if((point.x > -1) && (point.y > -1))// 两个点都大于0
-	{
-		gPcvrPointS0.x = point.x;
-		gPcvrPointS0.y = rc.bottom - point.y;
-		gPcvrPointS0.z = 1.0f;
+	// 两个点都大于0.
+	if((point.x > -1) && (point.y > -1)) {
+		switch (g_IndexActiveJGQ) {
+			case 0:
+				gPcvrPointS0.x = point.x;
+				gPcvrPointS0.y = g_RCGame.bottom - point.y;
+				gPcvrPointS0.z = 1.0f;
+				break;
+			case 1:
+				gPcvrPointS1.x = point.x;
+				gPcvrPointS1.y = g_RCGame.bottom - point.y;
+				gPcvrPointS1.z = 1.0f;
+				break;
+		}
 		//Con::printf("gpcvrpoints0   %f  %f  %f",gPcvrPointS0.x,gPcvrPointS0.y,gPcvrPointS0.z);
 	}
-	else if( point.x == -1 && point.y == -1 )
-	{
-		//光标出屏
-	}
+	//else if( point.x == -1 && point.y == -1 )
+	//{
+	//	//光标出屏
+	//}
 } 
 
-void CALLBACK PointProc2(int nID, POINT point)
-{
-	if (bGameTestSelf)
-	{
-		return;
-	}
-
-	HWND hDesktopWnd = GetDesktopWindow();
-	RECT rc;
-
-	GetWindowRect( hDesktopWnd, &rc );
-
-	if( ( point.x > -1) && (point.y > -1 ) )// 两个点都大于0
-	{
-		gPcvrPointS1.x = point.x;
-		gPcvrPointS1.y = rc.bottom - point.y;
-		gPcvrPointS1.z = 1.0f;
-		//Con::printf("gpcvrpoints1   %f  %f  %f",gPcvrPointS1.x,gPcvrPointS1.y,gPcvrPointS1.z);
-	}
-	else if( point.x == -1 && point.y == -1 )
-	{
-		//光标出屏
-	}
-}
+//void CALLBACK PointProc2(int nID, POINT point)
+//{
+//	if (bGameTestSelf)
+//	{
+//		return;
+//	}
+//
+//	HWND hDesktopWnd = GetDesktopWindow();
+//	RECT rc;
+//
+//	GetWindowRect( hDesktopWnd, &rc );
+//
+//	if( ( point.x > -1) && (point.y > -1 ) )// 两个点都大于0
+//	{
+//		gPcvrPointS1.x = point.x;
+//		gPcvrPointS1.y = rc.bottom - point.y;
+//		gPcvrPointS1.z = 1.0f;
+//		//Con::printf("gpcvrpoints1   %f  %f  %f",gPcvrPointS1.x,gPcvrPointS1.y,gPcvrPointS1.z);
+//	}
+//	//else if( point.x == -1 && point.y == -1 )
+//	//{
+//	//	//光标出屏
+//	//}
+//}
 
 pcvr::pcvr()
 {
@@ -192,7 +212,14 @@ bool pcvr::Init(void)
 	ZeroMemory( JiaoYanMiMaRand, sizeof( JiaoYanMiMaRand ) );
 	
 	InitJiaoYanMiMa();
-	
+
+	HWND hDesktopWnd = GetDesktopWindow();
+	if (hDesktopWnd != NULL) {
+		GetWindowRect( hDesktopWnd, &g_RCGame );
+	}
+
+	g_IndexActiveJGQ = 0;
+	m_ActivePlayerCount = 0;
 	return true;
 }
 
@@ -227,9 +254,8 @@ void pcvr::Enable(void)
 	b_enable = true;
 	enableNum ++;
 
-	//b_HasCreateGun = true; //test
-	if (!b_HasCreateGun)
-	{
+	//b_HasCreateGun = true; //test -> not open camera.
+	if (!b_HasCreateGun) {
 		b_HasCreateGun = true;
 		createGun();
 	}
@@ -600,7 +626,6 @@ void pcvr::keyProcess()
 		}
 	
 		camSetBasePoint();
-
 		ZeroMemory( gGetMsg, sizeof( gGetMsg ) );
 }
 
@@ -938,29 +963,31 @@ void pcvr::sendMessage(bool flag)
 	m_sendArray[6] = (BYTE)(m_sendArrTemp6[0] + m_sendArrTemp6[1] * 2 + m_sendArrTemp6[2] * 4 + m_sendArrTemp6[3] * 8
 		+ m_sendArrTemp6[4] * 16 + m_sendArrTemp6[5] * 32 +m_sendArrTemp6[6] * 64 + m_sendArrTemp6[7] * 128);
 
-	//玩家1的激光器打开.
-	if (m_JiGuangQiState[0] == 0x01) {
+	//一个时间节点.
+	if (m_ActivePlayerCount > 0) {
 		if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] > TimeCameraMin) {
-			m_sendArrTemp7[0] = 0x00;
-			if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] > 2*TimeCameraMin) {
-				TimeJiGuangQi[0] = Platform::getRealMilliseconds();
+			TimeJiGuangQi[0] = Platform::getRealMilliseconds();
+
+			g_IsUpdatePlayerZXPos = false;
+			g_IndexActiveJGQ++;
+			if (g_IndexActiveJGQ >= m_MaxPlayerNum) {
+				g_IndexActiveJGQ = 0;
+			}
+
+			for (int i = 0; i < m_MaxPlayerNum; i++) {
+				//玩家打开激光器.
+				if (m_JiGuangQiState[i] == 0x01) {
+					m_sendArrTemp7[i] = (i == g_IndexActiveJGQ ? 0x01 : 0x00);
+				}
+				else {
+					m_sendArrTemp7[i] = 0x00;
+				}
 			}
 		}
-		if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] <= TimeCameraMin)
-		{
-			m_sendArrTemp7[0] = 0x01;
-		}
-	}
-	else {
-		if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] > 100*TimeCameraMin) {
-			m_sendArrTemp7[0] = 0x00;
-			if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] > 200*TimeCameraMin) {
-				TimeJiGuangQi[0] = Platform::getRealMilliseconds();
+		else {
+			if (!g_IsUpdatePlayerZXPos && Platform::getRealMilliseconds() - TimeJiGuangQi[0] > TimeCameraMinFree) {
+				g_IsUpdatePlayerZXPos = true;
 			}
-		}
-		if (Platform::getRealMilliseconds() - TimeJiGuangQi[0] <= 100*TimeCameraMin)
-		{
-			m_sendArrTemp7[0] = 0x01;
 		}
 	}
 
@@ -1478,6 +1505,14 @@ void pcvr::openPlayerGun(int playerIndex, bool flag)
 	}
 	m_sendArrTemp7[playerIndex] = val;
 	m_JiGuangQiState[playerIndex] = val;
+
+	//更新游戏激活玩家数量信息.
+	m_ActivePlayerCount = 0;
+	for (int i = 0; i < m_MaxPlayerNum; i++) {
+		if (m_JiGuangQiState[i] == 0x01) {
+			m_ActivePlayerCount++;
+		}
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////

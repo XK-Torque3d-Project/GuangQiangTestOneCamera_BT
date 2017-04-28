@@ -273,7 +273,9 @@ UINT WINAPI CSerialPort::ListenThread( void* pParam )
 			continue;
 		}
 
-		Sleep(20);
+		//数据发送间隔时间.
+		//time = 1000 / (115200 / (39 * 10)) = 4ms. //115200是串口波特率.//39串口收发的最大数据字节数.
+		Sleep(4);
 
 		gPcvr->sendMessage(success21);
 		pSerialPort->WriteByte(gPcvr->m_sendArray, BufSendLen);	//chang fffffffffff lxy

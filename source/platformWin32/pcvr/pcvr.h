@@ -11,7 +11,6 @@ extern pcvr* gPcvr;	// 枪硬件库指针。
 class pcvr
 {
 public:
-
 	enum JIAOYANENUM
 	{
 		EMPTY = 0,
@@ -147,4 +146,7 @@ public:
 	bool	mCameraEnable;
 	bool	mOnSetBasePointState[2];
 	bool	mSetBasePointKeyDown[2];
+	//游戏最大玩家数量.
+	static const BYTE m_MaxPlayerNum = 2;
+	BYTE	m_ActivePlayerCount;
 };
