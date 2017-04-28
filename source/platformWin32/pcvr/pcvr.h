@@ -147,6 +147,6 @@ public:
 	bool	mOnSetBasePointState[2];
 	bool	mSetBasePointKeyDown[2];
 	//游戏最大玩家数量.
-	static const BYTE m_MaxPlayerNum = 2;
+	static const BYTE m_MaxPlayerNum = 4;
 	BYTE	m_ActivePlayerCount;
 };

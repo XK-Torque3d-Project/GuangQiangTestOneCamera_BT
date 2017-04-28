@@ -975,6 +975,12 @@ void pcvr::sendMessage(bool flag)
 			}
 
 			for (int i = 0; i < m_MaxPlayerNum; i++) {
+				//测试4个玩家准星阶段,暂时不添加控制3p和4p激光器逻辑.
+				if (i >= 2) {
+					break;
+				}
+				//测试end.
+
 				//玩家打开激光器.
 				if (m_JiGuangQiState[i] == 0x01) {
 					m_sendArrTemp7[i] = (i == g_IndexActiveJGQ ? 0x01 : 0x00);
