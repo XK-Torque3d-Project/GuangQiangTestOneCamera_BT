@@ -188,6 +188,11 @@ void GuiCrossHairHud::onRenderPcvr(const RectI &updateRect)
 				}
 			}
 			break;
+		case 2:
+		case 3:
+			rect.point.x = ::gPcvrPointSAy[mPcvrIndex - 2].x;
+			rect.point.y = ::gPcvrPointSAy[mPcvrIndex - 2].y;
+			break;
 		default:
 			rect.point.x = 0;
 			rect.point.y = 0;
@@ -234,6 +239,15 @@ void GuiCrossHairHud::onRenderPcvr(const RectI &updateRect)
 		break;
 	case 1:
 		if( ::gPcvrPointS1.x != ( -1 ) && ::gPcvrPointS1.y != ( -1 ) )
+		{
+			GFX->setClipRect(rect);
+			GFX->getDrawUtil()->clearBitmapModulation();
+			GFX->getDrawUtil()->drawBitmapStretch(mTextureObject, rect, GFXBitmapFlip_None, GFXTextureFilterLinear);
+		}
+		break;
+	case 2:
+	case 3:
+		if( ::gPcvrPointSAy[mPcvrIndex - 2].x != ( -1 ) && ::gPcvrPointSAy[mPcvrIndex - 2].y != ( -1 ) )
 		{
 			GFX->setClipRect(rect);
 			GFX->getDrawUtil()->clearBitmapModulation();

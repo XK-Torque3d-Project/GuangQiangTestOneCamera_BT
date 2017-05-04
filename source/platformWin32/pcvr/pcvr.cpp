@@ -100,6 +100,12 @@ void CALLBACK PointProc1(int nID, POINT point)
 				gPcvrPointS1.y = g_RCGame.bottom - point.y;
 				gPcvrPointS1.z = 1.0f;
 				break;
+			case 2:
+			case 3:
+				gPcvrPointSAy[g_IndexActiveJGQ - 2].x = point.x;
+				gPcvrPointSAy[g_IndexActiveJGQ - 2].y = g_RCGame.bottom - point.y;
+				gPcvrPointSAy[g_IndexActiveJGQ - 2].z = 1.0f;
+				break;
 		}
 		//Con::printf("gpcvrpoints0   %f  %f  %f",gPcvrPointS0.x,gPcvrPointS0.y,gPcvrPointS0.z);
 	}
@@ -1684,23 +1690,23 @@ ConsoleFunction( PCVRSetBallonetState, void, 3, 3, "set ballonet state")//ok
 	}
 }
 
-ConsoleFunction(PCVRGetCrossPosition, const char*, 2, 2, "")
-{
-	int pcvrIndex = dAtoi( argv[1] );
-	char *retBuffer = Con::getReturnBuffer(64);
-	if ( pcvrIndex == 1 )
-	{
-		dSprintf(retBuffer, 64, "%d %d", gPcvrPointS0.x, gPcvrPointS0.y);
-	}
-	else if ( pcvrIndex == 2 )
-	{
-		dSprintf(retBuffer, 64, "%d %d", gPcvrPointS1.x, gPcvrPointS1.y);
-	}
-	else
-		Con::errorf("invalid pcvr index!");
-
-	return retBuffer;
-}
+//ConsoleFunction(PCVRGetCrossPosition, const char*, 2, 2, "")
+//{
+//	int pcvrIndex = dAtoi( argv[1] );
+//	char *retBuffer = Con::getReturnBuffer(64);
+//	if ( pcvrIndex == 1 )
+//	{
+//		dSprintf(retBuffer, 64, "%d %d", gPcvrPointS0.x, gPcvrPointS0.y);
+//	}
+//	else if ( pcvrIndex == 2 )
+//	{
+//		dSprintf(retBuffer, 64, "%d %d", gPcvrPointS1.x, gPcvrPointS1.y);
+//	}
+//	else
+//		Con::errorf("invalid pcvr index!");
+//
+//	return retBuffer;
+//}
 
 //是否需要摇杆功能
 ConsoleFunction( PCVRSetRockerState, void, 2, 2, "set whether need rocker" )//ok
