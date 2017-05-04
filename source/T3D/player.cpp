@@ -6292,15 +6292,22 @@ void Player::getAttack2Vector( VectorF * vec, int whichPlayer)
 {
 	if ( mMasterObject != NULL )
 	{
-		if(whichPlayer == 1)
+		switch (whichPlayer)
 		{
-			//getContainer()->castRay(gGunOri_0/*gMouserayOri*/ , gGunDir_0/*gMouserayDir*/ , (TerrainObjectType | InteriorObjectType | StaticObjectType) | (PlayerObjectType | VehicleObjectType | DamagableItemObjectType) , &MouseRayinfo);
+		case 1:
 			*vec  = gGunV0;
-		}
-		if(whichPlayer == 2)
-		{
-			//getContainer()->castRay(gGunOri_1/*gMouserayOri*/ , gGunDir_1/*gMouserayDir*/ , (TerrainObjectType | InteriorObjectType | StaticObjectType) | (PlayerObjectType | VehicleObjectType | DamagableItemObjectType) , &MouseRayinfo);
-			*vec = gGunV1;
+			break;
+		case 2:
+			*vec  = gGunV1;
+			break;
+		case 3:
+			//gPcvrPointSAy[0];
+			*vec  = gGunV0;
+			break;
+		case 4:
+			//gPcvrPointSAy[0];
+			*vec  = gGunV1;
+			break;
 		}
 	}
 	else
