@@ -42,6 +42,7 @@
 /source/T3D/sceneComponent
 /source/T3D/*.h
 /source/T3D/*.cpp
+!/source/T3D/player.cpp
 /source/terrain
 /source/ts
 /source/unit
