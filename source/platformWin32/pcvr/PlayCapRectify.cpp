@@ -32,7 +32,7 @@ IGraphBuilder * g_pGraph[1] = {0};
 ICaptureGraphBuilder2 * g_pCapture[1] = {0};
 
 CSampleGrabberCB *CB = NULL;
-CSampleGrabberCB *CB1 = NULL;
+//CSampleGrabberCB *CB1 = NULL;
 
 bool restartCamera = false;
 

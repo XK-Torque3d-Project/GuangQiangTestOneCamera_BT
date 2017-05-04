@@ -114,6 +114,7 @@ public:
 	int m_ntempled;
 
 	bool b_getUnwantedLightSource;
+	//320*240=76800; -> 采集器的分辨率为320*240.
 	Point unwantedPoint[76800];
 	long unwantedPointNum;
 	int getFrameNum;
