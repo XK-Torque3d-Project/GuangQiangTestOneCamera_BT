@@ -206,6 +206,9 @@ bool pcvr::Init(void)
 	ZeroMemory( m_sendArrTemp6, sizeof( m_sendArrTemp6 ) );
 	ZeroMemory( m_sendArrTemp7, sizeof( m_sendArrTemp7 ) );
 	ZeroMemory( m_JiGuangQiState, sizeof( m_JiGuangQiState ) );
+	//默认打开3p和4p激光器.
+	m_JiGuangQiState[2] = 1;
+	m_JiGuangQiState[3] = 1;
 	ZeroMemory( gGetMsg, sizeof( gGetMsg ) );
 	m_saveCoord[0].set( 0, 0 );
 	m_saveCoord[1].set( 0, 0 );
@@ -226,6 +229,19 @@ bool pcvr::Init(void)
 
 	g_IndexActiveJGQ = 0;
 	m_ActivePlayerCount = 0;
+
+	//采集器刷新率.
+	BYTE caiJiQiShuaXinLv = 60;
+	switch (m_MaxPlayerNum) {
+	case 4:
+		//采集器最小冷却时间=1000/150=7ms.(150->采集器的刷新率)
+		if (caiJiQiShuaXinLv == 150)
+		{
+			TimeCameraMinFree = 7 * 2;
+			TimeCameraMin = TimeCameraMinFree + 7;
+		}
+		break;
+	}
 	return true;
 }
 
@@ -935,7 +951,7 @@ void pcvr::sendMessage(bool flag)
 	//减币-没用
 	m_sendArray[4] = 0x00;
 
-	if (isShanguangdeng)
+	/*if (isShanguangdeng)
 	{
 		if (shanJiangeTime <= 0)
 		{
@@ -959,7 +975,7 @@ void pcvr::sendMessage(bool flag)
 	{
 		m_sendArrTemp7[2] = 0x00;
 		m_sendArrTemp7[3] = 0x00;
-	}
+	}*/
 
 	//5 - 灯(0 1 开始灯)
 	m_sendArray[5] = (BYTE)(m_sendArrTemp5[0] + m_sendArrTemp5[1] * 2 + m_sendArrTemp5[2] * 4 + m_sendArrTemp5[3] * 8
@@ -982,8 +998,14 @@ void pcvr::sendMessage(bool flag)
 
 			for (int i = 0; i < m_MaxPlayerNum; i++) {
 				//测试4个玩家准星阶段,暂时不添加控制3p和4p激光器逻辑.
-				if (i >= 2) {
+				/*if (i >= 2) {
 					break;
+				}*/
+				//测试end.
+
+				//测试->用1p和2p激光器调试3p和4p玩家准星.
+				if (i < 2) {
+					continue;
 				}
 				//测试end.
 
@@ -994,6 +1016,10 @@ void pcvr::sendMessage(bool flag)
 				else {
 					m_sendArrTemp7[i] = 0x00;
 				}
+
+				//测试->用1p和2p激光器调试3p和4p玩家准星.
+				m_sendArrTemp7[i-2] = m_sendArrTemp7[i];
+				//测试end.
 			}
 		}
 		else {

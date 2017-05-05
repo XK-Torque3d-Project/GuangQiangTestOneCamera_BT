@@ -6301,12 +6301,8 @@ void Player::getAttack2Vector( VectorF * vec, int whichPlayer)
 			*vec  = gGunV1;
 			break;
 		case 3:
-			//gPcvrPointSAy[0];
-			*vec  = gGunV0;
-			break;
 		case 4:
-			//gPcvrPointSAy[0];
-			*vec  = gGunV1;
+			*vec  = gGunVAy[whichPlayer-3];
 			break;
 		}
 	}
@@ -7472,15 +7468,15 @@ ConsoleMethod( Player, getAttackPoint5, const char*,2, 2,"attackPoint2")
 	return buff;
 }
 
-ConsoleMethod( Player, getAttack1Vector,const char*,3, 3, "attack1 vector")
-{
-	VectorF v;
-	U32 index = dAtoi(argv[2]);
-	object->getAttack1Vector(&v, index);
-	char* buff = Con::getReturnBuffer(100);
-	dSprintf(buff,100,"%g %g %g",v.x,v.y,v.z);
-	return buff;
-}
+//ConsoleMethod( Player, getAttack1Vector,const char*,3, 3, "attack1 vector")
+//{
+//	VectorF v;
+//	U32 index = dAtoi(argv[2]);
+//	object->getAttack1Vector(&v, index);
+//	char* buff = Con::getReturnBuffer(100);
+//	dSprintf(buff,100,"%g %g %g",v.x,v.y,v.z);
+//	return buff;
+//}
 
 ConsoleMethod( Player, getAttack2Vector,const char*,3, 3, "attack2 vector")
 {
@@ -8482,6 +8478,11 @@ void Player::SetImageAim(MatrixF& mat)
 				return;
 		}
 
+		gGunVAy[0] = gGunV0;
+		gGunVAy[0].normalizeSafe();
+		gGunVAy[1] = gGunV1;
+		gGunVAy[1].normalizeSafe();
+
 		VectorF x, y(vec), z(0,0,1);
 
 		y.normalize();
@@ -8565,8 +8566,9 @@ void Player::SetImageAim(MatrixF& mat)
 
 				masterMat.getColumn(3, &masterObjectPos );//masterObjectPos ---- the gamecamera pos
 
-				if (mSlaveIndex == 0)
+				switch (mSlaveIndex)
 				{
+				case 0:
 					if (mGunTypeIndex == 2)
 					{
 						farPlaneVec = gPcvrPointW01 - masterObjectPos;
@@ -8575,9 +8577,8 @@ void Player::SetImageAim(MatrixF& mat)
 					{
 						farPlaneVec = gPcvrPointW0 - masterObjectPos;
 					}
-				}
-				else if (mSlaveIndex == 1)
-				{
+					break;
+				case 1:
 					if (mGunTypeIndex == 2)
 					{
 						farPlaneVec = gPcvrPointW11 - masterObjectPos;
@@ -8586,6 +8587,7 @@ void Player::SetImageAim(MatrixF& mat)
 					{
 						farPlaneVec = gPcvrPointW1 - masterObjectPos;
 					}
+					break;
 				}
 
 				testPoint = farPlaneVec * 50;
@@ -8595,16 +8597,26 @@ void Player::SetImageAim(MatrixF& mat)
 				hit = getContainer()->castRay(masterObjectPos, farPlaneVec, colMask, &MouseRayinfo);
 				getContainer()->castRay(masterObjectPos, farPlaneVec, colMask, &GunRayinfo_0);
 				getContainer()->castRay(masterObjectPos, farPlaneVec, colMask, &GunRayinfo_1);
-
-				if (mSlaveIndex == 0)
+				
+				for (int i = 0; i < 2; i++)
 				{
-					VectorF tempV = masterObjectPos - GunRayinfo_0.point;
-					distance1 = tempV.len();
+					farPlaneVec = gPcvrPointWAy[i] - masterObjectPos;
+					farPlaneVec *= 1000;
+					farPlaneVec = farPlaneVec + masterObjectPos;
+					getContainer()->castRay(masterObjectPos, farPlaneVec, colMask, &GunRayinfoAy[i]);
 				}
-				else if (mSlaveIndex == 1)
+
+				VectorF tempV;
+				switch (mSlaveIndex)
 				{
-					VectorF tempV = masterObjectPos - GunRayinfo_1.point;
+				case 0:
+					tempV = masterObjectPos - GunRayinfo_0.point;
+					distance1 = tempV.len();
+					break;
+				case 1:
+					tempV = masterObjectPos - GunRayinfo_1.point;
 					distance2 = tempV.len();
+					break;
 				}
 
 				if(mGunTypeIndex == 2)
@@ -8681,8 +8693,13 @@ void Player::SetImageAim(MatrixF& mat)
 			return;
 		}
 
-		VectorF x, y(vec), z(0,0,1);
+		for (int i = 0; i < 2; i++)
+		{
+			gGunVAy[i] = GunRayinfoAy[i].point - pos;
+			gGunVAy[i].normalizeSafe();
+		}
 
+		VectorF x, y(vec), z(0,0,1);
 		y.normalize();
 		mCross(y, z, &x);
 
