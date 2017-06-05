@@ -9,6 +9,8 @@
 
 #define __IDxtKey_INTERFACE_DEFINED__
 
+//#define __CHECK_CAMERA_ID
+
 //#include <streams.h>
 //#include <atlbase.h>
 #include <qedit.h>
@@ -659,6 +661,7 @@ HRESULT FindCaptureDevice(IBaseFilter ** ppSrcFilter)
 			pmalloc->Free( pDisplayName );
 			pmalloc->Release();
 			pbc->Release();
+#if __CHECK_CAMERA_ID
 			int result = wcscmp(wVidStr, L"04fc");
 			if(result != 0)
 			{
@@ -681,6 +684,20 @@ HRESULT FindCaptureDevice(IBaseFilter ** ppSrcFilter)
 				}
 				Con::executef( "OnConnectState", "4" );
 			}
+#else
+			hr = pMoniker->BindToObject(0,0,IID_IBaseFilter, (void**)&pSrc[0]);
+			if (FAILED(hr))
+			{
+				Msg(TEXT("Couldn't bind moniker to filter object!  hr=0x%x"), hr);
+			}
+
+			if (SUCCEEDED(hr))
+			{
+				ppSrcFilter[0] = pSrc[0];
+				ppSrcFilter[0]->AddRef();
+			}
+			Con::executef( "OnConnectState", "4" );
+#endif
 
 			/*if(wcscmp(wPidStr, L"fa06") == 0)
 			{
@@ -698,10 +715,12 @@ HRESULT FindCaptureDevice(IBaseFilter ** ppSrcFilter)
 				Con::executef( "OnConnectState", "6" );
 			}*/
 
+#if __CHECK_CAMERA_ID
 			if(wcscmp(wPidStr, L"fa02") != 0 && wcscmp(wPidStr, L"fa09") != 0)
 			{
 				MessageBox(NULL,  L"Camera id error!", L"error!", MB_OK);
 			}
+#endif
 		}
 	}
 
