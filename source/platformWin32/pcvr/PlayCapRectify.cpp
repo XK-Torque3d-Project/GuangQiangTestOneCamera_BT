@@ -9,7 +9,7 @@
 
 #define __IDxtKey_INTERFACE_DEFINED__
 
-//#define __CHECK_CAMERA_ID
+//#define __CHECK_CAMERA_ID 1
 
 //#include <streams.h>
 //#include <atlbase.h>
