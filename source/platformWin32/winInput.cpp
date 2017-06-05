@@ -71,7 +71,6 @@ void Input::init()
 	if ( gPcvr == NULL )
 	{
 		gPcvr = new pcvr;
-		//gPcvr->createGun();
 	}
 
 	//if (!mySerialPort.InitPort(1, CBR_38400))
