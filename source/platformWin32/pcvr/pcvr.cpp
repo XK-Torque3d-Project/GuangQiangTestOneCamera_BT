@@ -231,9 +231,15 @@ bool pcvr::Init(void)
 	m_ActivePlayerCount = 0;
 
 	//采集器刷新率.
-	BYTE caiJiQiShuaXinLv = 60;
+	BYTE caiJiQiShuaXinLv = 320;
 	switch (m_MaxPlayerNum) {
 	case 4:
+		//采集器最小冷却时间=1000/320=4ms.(320->采集器的刷新率)
+		if (caiJiQiShuaXinLv == 320)
+		{
+			TimeCameraMinFree = 4 * 2;
+			TimeCameraMin = TimeCameraMinFree + 4;
+		}
 		//采集器最小冷却时间=1000/150=7ms.(150->采集器的刷新率)
 		if (caiJiQiShuaXinLv == 150)
 		{
